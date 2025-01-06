@@ -1,0 +1,3 @@
+# zig tooling related
+.zig-cache
+zig-out
