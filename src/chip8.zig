@@ -3,7 +3,7 @@ const std = @import("std");
 const cstd = @cImport(@cInclude("stdlib.h"));
 const ctime = @cImport(@cInclude("time.h"));
 
-const font: [80]u8 = [_]u8{
+const fontset: [80]u8 = [_]u8{
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
     0x20, 0x60, 0x20, 0x20, 0x70, // 1
     0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
@@ -57,6 +57,10 @@ pub const CHIP8 = struct {
         self.stack = [_]u8{0} ** 16;
 
         self.keys = [_]u8{0} ** 16;
+
+        for (fontset, 0..) |char, idx| {
+            self.memory[idx] = char;
+        }
     }
 
     pub fn init(self: *Self) void {}
