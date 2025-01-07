@@ -22,6 +22,25 @@ pub const CHIP8 = struct {
 
     const Self = @This();
 
+    pub fn reset(self: *Self) void {
+        self.opcode = 0;
+        self.memory = [_]u8{0} ** 4096;
+        self.graphics = [_]u8{0} ** 64 * 32;
+
+        self.index = 0;
+        self.registers = [_]u8{0} ** 16;
+        self.pc = 0x200;
+
+        self.delay_timer = 0;
+        self.sound_timer = 0;
+
+        self.sp = 0;
+        self.stack = [_]u8{0} ** 16;
+
+        self.keys = [_]u8{0} ** 16;
+    }
+
     pub fn init(self: *Self) void {}
-    pub fn deinit() void {}
+
+    pub fn deinit(self: *Self) void {}
 };
