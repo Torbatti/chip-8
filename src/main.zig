@@ -2,7 +2,7 @@ const std = @import("std");
 
 const sdl = @cImport(@cInclude("SDL.h"));
 
-const CHIP8 = @import("chip8.zig");
+const CHIP8 = @import("chip8.zig").CHIP8;
 
 var window: ?*sdl.SDL_Window = null;
 var renderer: ?*sdl.SDL_Renderer = null;
@@ -40,20 +40,26 @@ pub fn main() !void {
     defer deinit();
 
     cpu = try allocator.create(CHIP8);
+    cpu.init();
+
+    // TODO: Load a Rom
 
     var keep_open = true;
     while (keep_open) {
         // TODO: Emulator Cycle
+        cpu.cycle();
 
         var e: sdl.SDL_Event = undefined;
         while (sdl.SDL_PollEvent(&e) > 0) {
             switch (e.type) {
                 sdl.SDL_QUIT => keep_open = false,
+                // TODO: Keypresses
                 else => {},
             }
         }
 
         _ = sdl.SDL_RenderClear(renderer);
+
         // TODO: Build Texture
 
         _ = sdl.SDL_RenderCopy(renderer, texture, null, null);

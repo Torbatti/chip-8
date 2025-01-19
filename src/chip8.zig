@@ -66,4 +66,42 @@ pub const CHIP8 = struct {
     pub fn init(self: *Self) void {}
 
     pub fn deinit(self: *Self) void {}
+
+    fn increment_pc(self: *Self) void {
+        self.pc += 2;
+    }
+
+    pub fn cycle(self: *Self) void {
+        self.opcode = self.memory[self.pc] << 8 | self.memory[self.pc + 1];
+
+        const first = self.opcode >> 12;
+
+        switch (first) {
+            0x0 => {
+                if (self.opcode == 0x00E0) {
+                    // Clear Graphics
+                    self.graphics = [_]u8{0} ** 64 * 32;
+                } else if (self.opcode == 0x00EE) {
+                    // TODO:
+                } else {
+                    // ignore
+                }
+                self.increment_pc();
+            },
+
+            0x1 => self.pc = self.opcode & 0x0FFF,
+
+            0x2 => {
+                self.stack[self.sp] = self.pc;
+                self.sp += 1;
+                self.pc = self.opcode & 0x0FFF;
+            },
+
+            0x3 => {},
+            0x4 => {},
+            0x5 => {},
+            0x6 => {},
+            0x7 => {},
+        }
+    }
 };
