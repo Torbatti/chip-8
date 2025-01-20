@@ -172,7 +172,11 @@ pub const CHIP8 = struct {
     pub fn cycle(self: *Self) void {
         self.opcode = self.memory[self.pc] << 8 | self.memory[self.pc + 1];
 
-        const first = self.opcode >> 12;
+        // split opcode to 4 parts -> 0x1234
+        const first = self.opcode >> 12 & 0x000F;
+        const second = self.opcode >> 8 & 0x000F;
+        const third = self.opcode >> 4 & 0x000F;
+        const fourth = self.opcode >> 0 & 0x000F;
 
         switch (first) {
             0x0 => {
