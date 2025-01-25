@@ -100,24 +100,24 @@ pub const CHIP8 = struct {
     pc: u16 = 0x200, // program counter "pseudo-register"
 
     sp: u16, // stack pointer "pseudo-register"
-    stack: [16]u16 = [_]u8{0} ** 16,
+    stack: [16]u16 = [_]u16{0} ** 16,
 
     //
     // - The computers which originally used the Chip-8 Language had a 16-key hexadecimal keypad.
     //
     // - Keyboard Layout:
-    // 1	2	3	C
-    // 4	5	6	D
-    // 7	8	9	E
-    // A	0	B	F
+    // 1 2 3 C
+    // 4 5 6 D
+    // 7 8 9 E
+    // A 0 B F
     //
     keys: [16]u8 = [_]u8{0} ** 16,
 
     //
     // The original implementation of the Chip-8 language used a 64x32-pixel monochrome display with this format:
     // -----------------
-    // |(0,0)	 (63,0)|
-    // |(0,31)	(63,31)|
+    // |(0,0)    (63,0)|
+    // |(0,31)  (63,31)|
     // -----------------
     //
     graphics: [64 * 32]u8 = [_]u8{0} ** 64 * 32,
@@ -167,9 +167,9 @@ pub const CHIP8 = struct {
         }
     }
 
-    pub fn init(self: *Self) void {}
+    // pub fn init(self: *Self) void {}
 
-    pub fn deinit(self: *Self) void {}
+    // pub fn deinit(self: *Self) void {}
 
     fn increment_pc(self: *Self) void {
         self.pc += 2;
@@ -179,22 +179,33 @@ pub const CHIP8 = struct {
         self.opcode = self.memory[self.pc] << 8 | self.memory[self.pc + 1];
 
         // split opcode to 4 parts -> 0x1234
-        const first = self.opcode >> 12 & 0x000F;
-        const second = self.opcode >> 8 & 0x000F;
-        const third = self.opcode >> 4 & 0x000F;
-        const fourth = self.opcode >> 0 & 0x000F;
+        // const first = self.opcode >> 12 & 0x000F;
 
-        switch (first) {
+        switch (self.opcode >> 12 & 0x000F) {
             0x0 => {
-                if (self.opcode == 0x00E0) {
-                    // Clear Graphics
-                    self.graphics = [_]u8{0} ** 64 * 32;
-                } else if (self.opcode == 0x00EE) {
-                    // TODO:
-                } else {
-                    // ignore
+                switch (self.opcode) {
+                    0x00E0 => {
+                        //  Clear the display.
+                        self.graphics = [_]u8{0} ** 64 * 32;
+                    },
+                    0x00EE => {
+                        // self.increment_pc();
+                        self.sp -= 1;
+                    },
+                    0x00FB => {}, // Super Chip-48
+                    0x00FC => {}, // Super Chip-48
+                    0x00FD => {}, // Super Chip-48
+                    0x00FE => {}, // Super Chip-48
+                    0x00FF => {}, // Super Chip-48
+                    else => {
+                        switch (self.opcode & 0xFFF0) {
+                            0x00C0 => {}, // 0x00Cn Super Chip-48
+                            else => {
+                                // 0nnn
+                            },
+                        }
+                    },
                 }
-                self.increment_pc();
             },
 
             0x1 => self.pc = self.opcode & 0x0FFF,

@@ -4,7 +4,7 @@ const builtin = @import("builtin");
 
 const zig_version = std.SemanticVersion{
     .major = 0,
-    .minor = 13,
+    .minor = 14,
     .patch = 0,
 };
 comptime {
